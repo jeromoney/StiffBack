@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="locationViewModel"
+            type="com.example.stiffback.LocationViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <TextView
+            android:id="@+id/latLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/lat"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/latValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            app:layout_constraintBottom_toBottomOf="@+id/latLabel"
+            app:layout_constraintStart_toEndOf="@+id/latLabel"
+            tools:text="38.2932" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="187dp" />
+
+        <TextView
+            android:id="@+id/lngLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/lngLabel"
+            app:layout_constraintBottom_toBottomOf="@+id/latLabel"
+            app:layout_constraintStart_toStartOf="@+id/guideline" />
+
+        <TextView
+            android:id="@+id/lngValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/latLabel"
+            app:layout_constraintStart_toEndOf="@+id/lngLabel"
+            tools:text="-106.5133" />
+
+        <TextView
+            android:id="@+id/northWest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="81dp"
+            android:text="TextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/latLabel" />
+
+        <TextView
+            android:id="@+id/north"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:text="TextView"
+            app:layout_constraintStart_toEndOf="@+id/northWest"
+            app:layout_constraintTop_toTopOf="@+id/northWest" />
+
+        <TextView
+            android:id="@+id/northEast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:text="TextView"
+            app:layout_constraintStart_toEndOf="@+id/north"
+            app:layout_constraintTop_toTopOf="@+id/northWest" />
+
+        <TextView
+            android:id="@+id/west"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="TextView"
+            app:layout_constraintStart_toStartOf="@+id/northWest"
+            app:layout_constraintTop_toBottomOf="@+id/northWest" />
+
+        <TextView
+            android:id="@+id/center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            app:layout_constraintStart_toStartOf="@+id/north"
+            app:layout_constraintTop_toTopOf="@+id/west" />
+
+        <TextView
+            android:id="@+id/east"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:text="TextView"
+            app:layout_constraintStart_toEndOf="@+id/center"
+            app:layout_constraintTop_toTopOf="@+id/west" />
+
+        <TextView
+            android:id="@+id/southWest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="TextView"
+            app:layout_constraintStart_toStartOf="@+id/northWest"
+            app:layout_constraintTop_toBottomOf="@+id/west" />
+
+        <TextView
+            android:id="@+id/south"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            app:layout_constraintStart_toStartOf="@+id/north"
+            app:layout_constraintTop_toTopOf="@+id/southWest" />
+
+        <TextView
+            android:id="@+id/southEast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            app:layout_constraintStart_toStartOf="@+id/northEast"
+            app:layout_constraintTop_toTopOf="@+id/southWest" />
+
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="74dp"
+            android:layout_marginTop="32dp"
+            android:onClick="changeElevation"
+            android:text="Update Elevation"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/south" />
+
+        <TextView
+            android:id="@+id/slopeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="12dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="128dp"
+            android:text="Slope:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/southWest" />
+
+        <TextView
+            android:id="@+id/aspectLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:text="Aspect:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/slopeLabel" />
+
+        <TextView
+            android:id="@+id/slopeValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            app:layout_constraintStart_toEndOf="@+id/slopeLabel"
+            app:layout_constraintTop_toTopOf="@+id/slopeLabel"
+            tools:text="25°" />
+
+        <TextView
+            android:id="@+id/aspectValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            app:layout_constraintStart_toEndOf="@+id/aspectLabel"
+            app:layout_constraintTop_toTopOf="@+id/aspectLabel"
+            tools:text="West" />
+
+        <TextView
+            android:id="@+id/treelineLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Treeline:"
+            app:layout_constraintStart_toStartOf="@+id/slopeLabel"
+            app:layout_constraintTop_toBottomOf="@+id/aspectLabel" />
+
+        <TextView
+            android:id="@+id/treelineValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="13dp"
+            app:layout_constraintStart_toEndOf="@+id/treelineLabel"
+            app:layout_constraintTop_toTopOf="@+id/treelineLabel"
+            tools:text="above" />
+
+        <TextView
+            android:id="@+id/accuracyLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="96dp"
+            android:layout_marginTop="17dp"
+            android:text="Accuracy:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/latValue" />
+
+        <TextView
+            android:id="@+id/accuracyValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            tools:text="10"
+            app:layout_constraintBottom_toBottomOf="@+id/accuracyLabel"
+            app:layout_constraintStart_toEndOf="@+id/accuracyLabel" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
