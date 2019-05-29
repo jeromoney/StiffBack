@@ -137,17 +137,6 @@
             app:layout_constraintTop_toTopOf="@+id/southWest" />
 
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="74dp"
-            android:layout_marginTop="32dp"
-            android:onClick="changeElevation"
-            android:text="Update Elevation"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/south" />
-
         <TextView
             android:id="@+id/slopeLabel"
             android:layout_width="wrap_content"
@@ -222,6 +211,26 @@
             tools:text="10"
             app:layout_constraintBottom_toBottomOf="@+id/accuracyLabel"
             app:layout_constraintStart_toEndOf="@+id/accuracyLabel" />
+
+        <TextView
+            android:id="@+id/mountainRangeValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="37dp"
+            android:layout_marginTop="64dp"
+            tools:text="Chugach"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/treelineLabel" />
+
+        <TextView
+            android:id="@+id/mountainRangeTreelineValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="37dp"
+            android:layout_marginTop="30dp"
+            tools:text="12,3400 ft"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mountainRangeValue" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

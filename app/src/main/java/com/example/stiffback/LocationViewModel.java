@@ -7,12 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.stiffback.remoteDataSource.ElevationValue;
-import com.example.stiffback.repository.LocationRetriever;
 import com.example.stiffback.treelineDatabase.TreelineEntity;
-import com.google.android.gms.location.FusedLocationProviderClient;
-
-import java.util.List;
 
 
 public class LocationViewModel extends AndroidViewModel {
@@ -30,6 +25,7 @@ public class LocationViewModel extends AndroidViewModel {
         mRepository = new LocationRepository(application);
         mLocation = mRepository.getmLocation();
         mNearestTreeline = mRepository.getmNearestTreeline();
+        mCompass = mRepository.getmCompass();
     }
 
 
@@ -66,27 +62,6 @@ public class LocationViewModel extends AndroidViewModel {
             mAspect = new MutableLiveData<>();
         }
         return mAspect;
-    }
-
-    public void updateElevation(){
-        LocationRetriever.getElevation(this);
-    }
-
-    /**
-     * Finds which one of the 9 cells to update
-     * @param elevationQuery
-     * @param i
-     * @param j
-     */
-    public void updateElevationValue(ElevationValue.PointQueryService.ElevationQuery elevationQuery, int i, int j){
-        LiveData<CompassCell> liveData = getmCompass();
-        CompassCell newCompass = liveData.getValue();
-        if (newCompass == null) newCompass = new CompassCell();
-        newCompass.updateElevationValue(elevationQuery,i,j);
-        getmCompass().postValue(newCompass);
-        // got new elevation values, now calculate slope
-        updateSlope(newCompass.cellArr);
-        updateAspect(newCompass.cellArr);
     }
 
     private void updateSlope(Double[][] cells){

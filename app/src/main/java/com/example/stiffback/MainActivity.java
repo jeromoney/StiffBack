@@ -68,9 +68,6 @@ public class MainActivity extends AppCompatActivity {
                 binding.latValue.setText(latStr);
                 binding.lngValue.setText(lngStr);
                 binding.accuracyValue.setText(accuracyStr);
-
-                // New location so let's query USGS servers again.
-                model.updateElevation();
             }
         };
 
@@ -119,9 +116,5 @@ public class MainActivity extends AppCompatActivity {
 
     public Activity getActivity(){
         return this;
-    }
-
-    public void changeElevation(View view){
-        model.updateElevation();
     }
 }
