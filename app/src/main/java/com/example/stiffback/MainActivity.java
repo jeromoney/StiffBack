@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         final Observer<List<TreelineEntity>> treelineObserver = new Observer<List<TreelineEntity>>() {
             @Override
             public void onChanged(List<TreelineEntity> treelineEntities) {
-                Log.i("dick","butt");
+                Log.i("dick","butt"); // TODO -- Remove this breakpoint
             }
         };
 

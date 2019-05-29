@@ -21,7 +21,6 @@ public abstract class AppDatabase extends RoomDatabase {
         return Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class,
                             "treeline-database")
-                .allowMainThreadQueries() //TODO -- REMOVE THIS MAIN THREAD QUERY
                             .addCallback(new Callback() {
                                 @Override
                                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
