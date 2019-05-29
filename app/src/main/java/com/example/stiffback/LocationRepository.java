@@ -41,6 +41,8 @@ public class LocationRepository {
     private MutableLiveData<Location> mLocation;
     private MutableLiveData<TreelineEntity> mNearestTreeline;
     private MutableLiveData<CompassCell> mCompass;
+    private MutableLiveData<Double> mSlope;
+    private MutableLiveData<Double> mAspect;
 
 
     LocationRepository(Application application) {
@@ -50,6 +52,8 @@ public class LocationRepository {
         initializeLocation(application);
         mNearestTreeline = new MutableLiveData<>();
         mCompass = new MutableLiveData<>();
+        mSlope = new MutableLiveData<>();
+        mAspect = new MutableLiveData<>();
     }
 
     private void initializeLocation(final Application application) {
@@ -149,8 +153,19 @@ public class LocationRepository {
         newCompass.updateElevationValue(elevationQuery,i,j);
         getmCompass().postValue(newCompass);
         // got new elevation values, now calculate slope
-        //updateSlope(newCompass.cellArr);
-        //updateAspect(newCompass.cellArr);
+        updateSlope(newCompass.cellArr);
+        updateAspect(newCompass.cellArr);
+    }
+
+    private void updateSlope(Double[][] cells){
+        double lng = getmLocation().getValue().getLongitude();
+        double slope = SlopeUtils.slope(cells, lng);
+        getmSlope().postValue(slope);
+    }
+
+    private void updateAspect(Double[][] cells){
+        double aspect = SlopeUtils.aspect(cells);
+        getmAspect().postValue(aspect);
     }
 
     private void updateMountainRange(Location location) {
@@ -190,6 +205,14 @@ public class LocationRepository {
 
     public MutableLiveData<CompassCell> getmCompass(){
         return mCompass;
+    }
+
+    public MutableLiveData<Double> getmSlope(){
+        return mSlope;
+    }
+
+    public MutableLiveData<Double> getmAspect(){
+        return mAspect;
     }
 
 

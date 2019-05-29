@@ -26,6 +26,8 @@ public class LocationViewModel extends AndroidViewModel {
         mLocation = mRepository.getmLocation();
         mNearestTreeline = mRepository.getmNearestTreeline();
         mCompass = mRepository.getmCompass();
+        mSlope = mRepository.getmSlope();
+        mAspect = mRepository.getmAspect();
     }
 
 
@@ -63,15 +65,5 @@ public class LocationViewModel extends AndroidViewModel {
         }
         return mAspect;
     }
-
-    private void updateSlope(Double[][] cells){
-        double lng = getmLocation().getValue().getLongitude();
-        double slope = SlopeUtils.slope(cells, lng);
-        getmSlope().postValue(slope);
-    }
-
-    private void updateAspect(Double[][] cells){
-        double aspect = SlopeUtils.aspect(cells);
-        getmAspect().postValue(aspect);
-    }
+    
 }
