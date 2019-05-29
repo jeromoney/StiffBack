@@ -2,11 +2,11 @@ package com.example.stiffback;
 
 import android.app.Application;
 import android.location.Location;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.stiffback.repository.LocationRetriever;
 import com.example.stiffback.treelineDatabase.AppDatabase;
 import com.example.stiffback.treelineDatabase.TreelineDao;
 import com.example.stiffback.treelineDatabase.TreelineEntity;
@@ -21,20 +21,26 @@ import java.util.concurrent.TimeUnit;
 
 public class LocationRepository {
 
-    private FusedLocationProviderClient mFusedLocationClient;
+    private String TAG = this.getClass().getSimpleName();
 
+    private FusedLocationProviderClient mFusedLocationClient;
+    private AppDatabase mDb;
     private TreelineDao mTreelineDao;
-    private LiveData<List<TreelineEntity>> mAllTreelines;
+    private List<TreelineEntity> mAllTreelines;
     private MutableLiveData<Location> mLocation;
+    private MutableLiveData<TreelineEntity> mNearestTreeline;
 
     LocationRepository(Application application) {
-        AppDatabase db = AppDatabase.getInstance(application);
-        mTreelineDao = db.treelineDao();
-        mAllTreelines = mTreelineDao.getAll();
+        mDb = AppDatabase.getInstance(application);
+        mTreelineDao = mDb.treelineDao();
+        mAllTreelines = mTreelineDao.getAll(); // TODO -- need to change to ASYNC
         initializeLocation(application);
+        mNearestTreeline = new MutableLiveData<>();
     }
 
     private void initializeLocation(final Application application) {
+
+
         // Create the location API
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(application);
 
@@ -50,20 +56,44 @@ public class LocationRepository {
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 Location location = locationResult.getLastLocation();
-                getmLocation().setValue(location);
+                getmLocation().postValue(location);
+                // TODO - retrieve new elevation values
+                // TODO - Find the closest mountain range from the location
+                updateMountainRange(location);
+
             }
         };
-        mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        try {
+            mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        }
+        catch (SecurityException exception){
+            Log.i(TAG, "Need to allow location permissions");
+        }
 
 
+    }
 
+    private void updateMountainRange(Location location) {
+        List<TreelineEntity> treelineEntities = getTreelineEntities();
+        if (treelineEntities == null) return;
+        // Run through list to find minimum distance
+        double min_distance = 99999.;
+        TreelineEntity nearest_entity = null;
+        for (TreelineEntity treelineEntity:treelineEntities){
+            double distance = treelineEntity.latlngDistance(location.getLatitude(),location.getLongitude());
+            if (distance < min_distance){
+                min_distance = distance;
+                nearest_entity = treelineEntity;
+            }
+        }
+        mNearestTreeline.postValue(nearest_entity);
     }
 
     private void setmLocation(Location location){
         getmLocation().getValue().set(location);
     }
 
-    public LiveData<List<TreelineEntity>> getTreelineEntities() {
+    public List<TreelineEntity> getTreelineEntities() {
         return mAllTreelines;
     }
 
@@ -74,6 +104,9 @@ public class LocationRepository {
         return mLocation;
     }
 
+    public MutableLiveData<TreelineEntity> getmNearestTreeline(){
+        return mNearestTreeline;
+    }
 
 
 

@@ -23,21 +23,21 @@ public class LocationViewModel extends AndroidViewModel {
     private MutableLiveData<CompassCell> mCompass;
     private MutableLiveData<Double> mSlope;
     private MutableLiveData<Double> mAspect;
-    private LiveData<List<TreelineEntity>> mTreelineEntities;
+    private LiveData<TreelineEntity> mNearestTreeline;
 
     public LocationViewModel(Application application) {
         super(application);
         mRepository = new LocationRepository(application);
-        mTreelineEntities = mRepository.getTreelineEntities();
         mLocation = mRepository.getmLocation();
+        mNearestTreeline = mRepository.getmNearestTreeline();
     }
 
 
-    public final LiveData<List<TreelineEntity>> getmTreelineEntities(){
-        if (mTreelineEntities == null){
-            mTreelineEntities = new MutableLiveData<>();
+    public final LiveData<TreelineEntity> getmNearestTreeline(){
+        if (mNearestTreeline == null){
+            mNearestTreeline = new MutableLiveData<>();
         }
-        return mTreelineEntities;
+        return mNearestTreeline;
     }
 
     public final MutableLiveData<Location> getmLocation(){

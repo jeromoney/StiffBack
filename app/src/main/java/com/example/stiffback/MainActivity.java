@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
+import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,12 +25,9 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+    private int PERMISSIONS_REQUEST_FINE_LOCATION = 1234;
 
     private LocationViewModel model;
-
-    private FusedLocationProviderClient mFusedLocationClient;
-    private Task<Location> mLocationTask;
-    private int PERMISSIONS_REQUEST_FINE_LOCATION = 1234;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Request permission
-        ActivityCompat.requestPermissions(MainActivity.this,
+        ActivityCompat.requestPermissions(this,
                 new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET},
                 PERMISSIONS_REQUEST_FINE_LOCATION);
 
@@ -46,14 +44,16 @@ public class MainActivity extends AppCompatActivity {
 
         // Get the ViewModel.
         model = ViewModelProviders.of(this).get(LocationViewModel.class);
-        // set location request
 
         // Create the observers which updates the UI.
         // Treeline observer
-        final Observer<List<TreelineEntity>> treelineObserver = new Observer<List<TreelineEntity>>() {
+        final Observer<TreelineEntity> treelineObserver = new Observer<TreelineEntity>() {
             @Override
-            public void onChanged(List<TreelineEntity> treelineEntities) {
-                Log.i("dick","butt"); // TODO -- Remove this breakpoint
+            public void onChanged(TreelineEntity treelineEntity) {
+                String mountainRange = treelineEntity.getMountainRange();
+                int elev = treelineEntity.getTreelineElevation();
+                binding.mountainRangeValue.setText(mountainRange);
+                binding.mountainRangeTreelineValue.setText(Integer.toString(elev));
             }
         };
 
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        model.getmTreelineEntities().observe(this,treelineObserver);
+        model.getmNearestTreeline().observe(this, treelineObserver);
         model.getmLocation().observe(this, locationObserver);
         model.getmCompass().observe(this,compassObserver);
         model.getmSlope().observe(this,slopeObserver);
@@ -117,6 +117,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public Activity getActivity(){
+        return this;
+    }
 
     public void changeElevation(View view){
         model.updateElevation();

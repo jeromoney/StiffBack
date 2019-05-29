@@ -11,7 +11,7 @@ import java.util.List;
 public interface TreelineDao {
 
     @Query("SELECT * FROM treeline")
-    LiveData<List<TreelineEntity>> getAll();
+    List<TreelineEntity> getAll();
 
     @Insert
     void insertAll(TreelineEntity... treelineEntities);

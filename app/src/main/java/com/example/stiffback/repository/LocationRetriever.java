@@ -23,16 +23,6 @@ import static com.example.stiffback.SlopeUtils.THIRD_ARC_SECOND;
 public class LocationRetriever {
     private static final String TAG = LocationRetriever.class.getSimpleName();
 
-    public static void getLastLocation(final LocationViewModel model, FusedLocationProviderClient fusedLocationProviderClient){
-        fusedLocationProviderClient.getLastLocation()
-                .addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        model.getmLocation().postValue(location);
-                    }
-                });
-    }
-
     /**
      * Creates 9 cells and calls USGS elevation service to find elevation value
      * @param model
