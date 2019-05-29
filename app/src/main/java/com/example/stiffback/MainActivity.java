@@ -14,23 +14,13 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.stiffback.databinding.ActivityMainBinding;
-import com.example.stiffback.treelineDatabase.AppDatabase;
-import com.example.stiffback.treelineDatabase.TreelineDao;
 import com.example.stiffback.treelineDatabase.TreelineEntity;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.SettingsClient;
+
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static com.example.stiffback.treelineDatabase.AppDatabase.getInstance;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -52,25 +42,6 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET},
                 PERMISSIONS_REQUEST_FINE_LOCATION);
 
-
-        // Create the location API
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        // Create location Requests
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setInterval(TimeUnit.SECONDS.toMillis(5));
-        locationRequest.setFastestInterval(TimeUnit.SECONDS.toMillis(5));
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-
-        LocationCallback locationCallback = new LocationCallback(){
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                changeLiveData();
-            }
-        };
-        mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
 
 
         // Get the ViewModel.
@@ -146,12 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void changeLiveData(){
-
-
-
-        model.update(mFusedLocationClient);
-    }
 
     public void changeElevation(View view){
         model.updateElevation();

@@ -29,6 +29,7 @@ public class LocationViewModel extends AndroidViewModel {
         super(application);
         mRepository = new LocationRepository(application);
         mTreelineEntities = mRepository.getTreelineEntities();
+        mLocation = mRepository.getmLocation();
     }
 
 
@@ -65,20 +66,6 @@ public class LocationViewModel extends AndroidViewModel {
             mAspect = new MutableLiveData<>();
         }
         return mAspect;
-    }
-
-
-
-
-    /**
-     *
-     * Calls the location model to retrieve last known location.
-     *
-     * @param fusedLocationProviderClient
-     */
-    public void update(FusedLocationProviderClient fusedLocationProviderClient){
-        LocationRetriever.getLastLocation(this , fusedLocationProviderClient);
-        // The getElevation call needs to be called after the location is found
     }
 
     public void updateElevation(){
