@@ -14,6 +14,9 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.stiffback.databinding.ActivityMainBinding;
+import com.example.stiffback.treelineDatabase.AppDatabase;
+import com.example.stiffback.treelineDatabase.TreelineDao;
+import com.example.stiffback.treelineDatabase.TreelineEntity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -24,7 +27,10 @@ import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static com.example.stiffback.treelineDatabase.AppDatabase.getInstance;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -71,7 +77,16 @@ public class MainActivity extends AppCompatActivity {
         model = ViewModelProviders.of(this).get(LocationViewModel.class);
         // set location request
 
-        // Create the observer which updates the UI.
+        // Create the observers which updates the UI.
+        // Treeline observer
+        final Observer<List<TreelineEntity>> treelineObserver = new Observer<List<TreelineEntity>>() {
+            @Override
+            public void onChanged(List<TreelineEntity> treelineEntities) {
+                Log.i("dick","butt");
+            }
+        };
+
+
         final Observer<Location> locationObserver = new Observer<Location>() {
             @Override
             public void onChanged(@Nullable final Location location) {
@@ -123,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
+        model.getmTreelineEntities().observe(this,treelineObserver);
         model.getmLocation().observe(this, locationObserver);
         model.getmCompass().observe(this,compassObserver);
         model.getmSlope().observe(this,slopeObserver);
@@ -131,6 +147,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void changeLiveData(){
+
+
+
         model.update(mFusedLocationClient);
     }
 

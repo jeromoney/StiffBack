@@ -1,25 +1,43 @@
 package com.example.stiffback;
 
+import android.app.Application;
 import android.location.Location;
 
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.stiffback.remoteDataSource.ElevationValue;
 import com.example.stiffback.repository.LocationRetriever;
+import com.example.stiffback.treelineDatabase.TreelineEntity;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
 
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 
-public class LocationViewModel extends ViewModel {
+public class LocationViewModel extends AndroidViewModel {
+
+    private LocationRepository mRepository;
 
     private MutableLiveData<Location> mLocation;
     private MutableLiveData<CompassCell> mCompass;
     private MutableLiveData<Double> mSlope;
     private MutableLiveData<Double> mAspect;
+    private LiveData<List<TreelineEntity>> mTreelineEntities;
+
+    public LocationViewModel(Application application) {
+        super(application);
+        mRepository = new LocationRepository(application);
+        mTreelineEntities = mRepository.getTreelineEntities();
+    }
+
+
+    public final LiveData<List<TreelineEntity>> getmTreelineEntities(){
+        if (mTreelineEntities == null){
+            mTreelineEntities = new MutableLiveData<>();
+        }
+        return mTreelineEntities;
+    }
 
     public final MutableLiveData<Location> getmLocation(){
         if (mLocation == null){
