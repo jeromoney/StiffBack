@@ -11,18 +11,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 
 import com.example.stiffback.databinding.ActivityMainBinding;
 import com.example.stiffback.treelineDatabase.TreelineEntity;
-import com.google.android.gms.location.FusedLocationProviderClient;
-
-import com.google.android.gms.tasks.Task;
-
-import java.util.List;
-
-
 
 public class MainActivity extends AppCompatActivity {
     private int PERMISSIONS_REQUEST_FINE_LOCATION = 1234;
@@ -58,22 +49,20 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
-        final Observer<Location> locationObserver = new Observer<Location>() {
-            @Override
-            public void onChanged(@Nullable final Location location) {
-                // Update the UI, in this case, a TextView.
-                String latStr = Double.toString(location.getLatitude());
-                String lngStr = Double.toString(location.getLongitude());
-                String accuracyStr = Double.toString(location.getAccuracy());
-                binding.latValue.setText(latStr);
-                binding.lngValue.setText(lngStr);
-                binding.accuracyValue.setText(accuracyStr);
-            }
-        };
-
         final Observer<CompassCell> compassObserver = new Observer<CompassCell>() {
             @Override
             public void onChanged(@Nullable final CompassCell compassCell) {
+
+                Location location = compassCell.getmLocation();
+                if (location != null) {
+                    String latStr = Double.toString(location.getLatitude());
+                    String lngStr = Double.toString(location.getLongitude());
+                    String accuracyStr = Double.toString(location.getAccuracy());
+                    binding.latValue.setText(latStr);
+                    binding.lngValue.setText(lngStr);
+                    binding.accuracyValue.setText(accuracyStr);
+                }
+
                 // Update the UI, in this case, a TextView.
                 binding.center.setText(String.format("%.0f", compassCell.cellArr[1][1]));
                 binding.north.setText(String.format("%.0f", compassCell.cellArr[2][0]));
@@ -107,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
         model.getmNearestTreeline().observe(this, treelineObserver);
-        model.getmLocation().observe(this, locationObserver);
         model.getmCompass().observe(this,compassObserver);
         model.getmSlope().observe(this,slopeObserver);
         model.getmAspect().observe(this,aspectObserver);
