@@ -11,8 +11,15 @@ import java.util.List;
 public interface TreelineDao {
 
     @Query("SELECT * FROM treeline")
-    List<TreelineEntity> getAll();
+    LiveData<List<TreelineEntity>> getAll();
 
     @Insert
     void insertAll(TreelineEntity... treelineEntities);
+
+    // get an elevation by matching lat and lng
+    @Query("SELECT * FROM elevationValue WHERE lat = :lat AND lng = :lng")
+    List<ElevationEntity> elevationMatch(double lat, double lng);
+
+    @Insert
+    void insertElevation(ElevationEntity elevationEntity);
 }

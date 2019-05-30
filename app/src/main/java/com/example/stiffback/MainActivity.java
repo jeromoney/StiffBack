@@ -8,7 +8,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
-import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -37,12 +36,9 @@ public class MainActivity extends AppCompatActivity {
         model = ViewModelProviders.of(this).get(LocationViewModel.class);
 
         // Create the observers which updates the UI.
-
-        final Observer<LocationCell> compassObserver = new Observer<LocationCell>() {
+        final Observer<Location> locationObserver = new Observer<Location>() {
             @Override
-            public void onChanged(@Nullable final LocationCell compassCell) {
-
-                Location location = compassCell.getmLocation();
+            public void onChanged(Location location) {
                 if (location != null) {
                     String latStr = Double.toString(location.getLatitude());
                     String lngStr = Double.toString(location.getLongitude());
@@ -51,6 +47,13 @@ public class MainActivity extends AppCompatActivity {
                     binding.lngValue.setText(lngStr);
                     binding.accuracyValue.setText(accuracyStr);
                 }
+            }
+        };
+
+        final Observer<LocationCell> compassObserver = new Observer<LocationCell>() {
+            @Override
+            public void onChanged(@Nullable final LocationCell compassCell) {
+
                 // Update nearest treeline
                 TreelineEntity treelineEntity = compassCell.getmTreelineEntity();
                 if (treelineEntity != null){
@@ -80,21 +83,25 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        // Create the observer which updates the UI.
-        final Observer<Double> aspectObserver = new Observer<Double>() {
-            @Override
-            public void onChanged(@Nullable final Double aspect) {
-                // Update the UI, in this case, a TextView.
-                binding.aspectValue.setText(aspect.toString());
-            }
-        };
 
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        model.getmCompass().observe(this,compassObserver);
+        model.getmLocationCell().observe(this,compassObserver);
+        model.getmLocation().observe(this, locationObserver);
 
     }
 
-    public Activity getActivity(){
-        return this;
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Stop receiving location updates when app is not visible
+        model.pauseLocationUpdate();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Start receiving location updates
+        model.resumeLocationUpdate();
+    }
+
 }

@@ -10,13 +10,13 @@ import androidx.lifecycle.MutableLiveData;
 public class LocationViewModel extends AndroidViewModel {
 
     private LocationRepository mRepository;
-    
+
     public LocationViewModel(Application application) {
         super(application);
         mRepository = new LocationRepository(application);
     }
 
-    public final MutableLiveData<LocationCell> getmCompass(){
+    public final MutableLiveData<LocationCell> getmLocationCell(){
         return this.mRepository.getmLocationCell();
     }
 

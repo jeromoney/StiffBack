@@ -21,17 +21,12 @@ public class LocationCell {
 
     protected Double[][] cellArr = new Double[3][3];
 
-    public LocationCell(Location location){
+    public LocationCell(){
         this.mTreelineEntity = null;
-        this.mLocation = location;
         // initialize cell with zeros
         for (int i = 0; i<3; i++) for (int j = 0; j<3; j++){
             cellArr[i][j] = 0.;
         }
-    }
-
-    public Location getmLocation(){
-        return this.mLocation;
     }
 
     public void setmTreelineEntity(TreelineEntity treelineEntity){
@@ -66,14 +61,13 @@ public class LocationCell {
     /**
      * The asycronous USGS api queries return at random times so the class needs to identify the
      * direction and update appropriately.
-     * @param elevationQuery
+     * @param elevation
      * @param i
      * @param j
      * @return
      */
-    public final LocationCell updateElevationValue(ElevationValue.PointQueryService.ElevationQuery elevationQuery, int i, int j){
-        Log.d(TAG, String.format("Lat:%f lon:%f elev:%f", elevationQuery.mLat,elevationQuery.mLng,elevationQuery.mElevation));
-        Double elev = elevationQuery.mElevation;
+    public final LocationCell updateElevationValue(double elevation, int i, int j){
+        Double elev = elevation;
         cellArr[i+1][j+1] = elev;
         return this;
     }

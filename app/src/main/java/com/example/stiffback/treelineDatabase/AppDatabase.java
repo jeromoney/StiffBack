@@ -10,7 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.concurrent.Executors;
 
-@Database(entities = {TreelineEntity.class}, version = 1)
+@Database(entities = {TreelineEntity.class, ElevationEntity.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;
@@ -21,6 +21,7 @@ public abstract class AppDatabase extends RoomDatabase {
         return Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class,
                             "treeline-database")
+                            .fallbackToDestructiveMigration() // TODO - Yes I am dirty boy
                             .addCallback(new Callback() {
                                 @Override
                                 public void onCreate(@NonNull SupportSQLiteDatabase db) {

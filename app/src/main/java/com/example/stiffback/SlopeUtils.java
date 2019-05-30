@@ -17,6 +17,16 @@ public final class SlopeUtils {
     }
 
     /**
+     * Changes an arbitary degree measurement and finds the nearest sixth of an arc_second, inbetween
+     * two third of arc_seconds
+     * @param degree
+     * @return snapped_degree
+     */
+    public static double arc_second_snap(double degree){
+        return Math.floor(degree / THIRD_ARC_SECOND) * THIRD_ARC_SECOND + THIRD_ARC_SECOND / 2.;
+    }
+
+    /**
      *      * Algo based on http://desktop.arcgis.com/en/arcmap/10.3/tools/spatial-analyst-toolbox/how-slope-works.htm
      * @param cell
      * @param lng
@@ -41,10 +51,8 @@ public final class SlopeUtils {
         double dy = dy_helper(a,b,c,g,h,i) / Y_CELLSIZE;
 
         double rise_run = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-        double slope_degrees = Math.atan(rise_run) * (180. / Math.PI);
-
-        return slope_degrees;
-}
+        return Math.atan(rise_run) * (180. / Math.PI);
+    }
 
     public static Double aspect(Double[][] cell){
         //http://desktop.arcgis.com/en/arcmap/10.3/tools/spatial-analyst-toolbox/how-aspect-works.htm
