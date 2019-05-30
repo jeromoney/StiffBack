@@ -37,21 +37,18 @@ public class LocationRepository {
     private AppDatabase mDb;
     private TreelineDao mTreelineDao;
     private List<TreelineEntity> mAllTreelines;
-    private MutableLiveData<LocationCell> mCompass;
-
-
+    private MutableLiveData<LocationCell> mLocationCell;
 
     LocationRepository(Application application) {
         mDb = AppDatabase.getInstance(application);
         mTreelineDao = mDb.treelineDao();
         mAllTreelines = mTreelineDao.getAll(); // TODO -- need to change to ASYNC
         initializeLocation(application);
-        mCompass = new MutableLiveData<>();
+        mLocationCell = new MutableLiveData<>();
 
     }
+
     private void initializeLocation(final Application application) {
-
-
         // Create the location API
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(application);
 
@@ -61,21 +58,19 @@ public class LocationRepository {
         locationRequest.setFastestInterval(TimeUnit.SECONDS.toMillis(5));
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-
         LocationCallback locationCallback = new LocationCallback(){
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 Location oldLocation;
-                if (getmCompass().getValue() == null) {
+                if (getmLocationCell().getValue() == null) {
                     oldLocation = null;
                 }
                 else {
-                    oldLocation = getmCompass().getValue().getmLocation();
+                    oldLocation = getmLocationCell().getValue().getmLocation();
                 }
 
                 Location location = locationResult.getLastLocation();
-
                 // If the location hasn't changed, don't query servers again.
                 if (oldLocation != null
                         && oldLocation.getLatitude() == location.getLatitude()
@@ -84,7 +79,7 @@ public class LocationRepository {
                 Log.d(TAG, String.format("New Location Lat:%f Lng:%f" , location.getLatitude(), location.getLongitude()));
                 // Start a new object from scratch
                 LocationCell locationCell = new LocationCell(location);
-                getmCompass().setValue(locationCell);
+                getmLocationCell().setValue(locationCell);
                 // retrieve new elevation values
                 updateElevation(location);
 
@@ -103,9 +98,8 @@ public class LocationRepository {
 
     }
 
-
     /**
-     * Creates 9 cells and calls USGS elevation service to find elevation value
+     * Creates 9 cells and calls USGS elevation service to find elevation value.
      */
     private void updateElevation(Location location){
         // This method needs to wait until the location is found and not null to activate.
@@ -138,7 +132,9 @@ public class LocationRepository {
                     public void onResponse(Call<ElevationValue> call, Response<ElevationValue> response) {
                         // Get the response object of our query
                         ElevationValue.PointQueryService.ElevationQuery elevationQuery = response.body().mPointQueryService.mElevationQuery;
-                        // Pass it to ViewModel who decides where to place it
+                        // Pass it to LocationCell object who decides where to place it
+                        // TODO- Make sure that old requests are canceled and don't replace newer
+                        // responses
                         updateElevationValue(elevationQuery, finalI, finalJ);
                     }
                     @Override
@@ -151,22 +147,27 @@ public class LocationRepository {
     }
 
     /**
-     * Finds which one of the 9 cells to update
+     * Since async network operations are used to query the USGS servers, the elevation values are
+     * passed back at random times. The location cell receives the elevation value and figures
+     * which of the 9 cells to place the value in.
+     *
+     * This method also establishes the pattern of checking out a LocationCell object, modifying it,
+     * and then returning it back.
      * @param elevationQuery
      * @param i
      * @param j
      */
     private void updateElevationValue(ElevationValue.PointQueryService.ElevationQuery elevationQuery, int i, int j){
-        LocationCell newCompass = getmCompass().getValue();
-        newCompass.updateElevationValue(elevationQuery,i,j);
-        getmCompass().postValue(newCompass);
+        LocationCell locationCell = getmLocationCell().getValue();
+        locationCell.updateElevationValue(elevationQuery,i,j);
+        getmLocationCell().postValue(locationCell);
         // got new elevation values, now calculate slope
         updateSlope();
         updateAspect();
     }
 
     private void updateSlope(){
-        LocationCell locationCell = getmCompass().getValue();
+        LocationCell locationCell = getmLocationCell().getValue();
         Double[][] cells = locationCell.getCellArr();
         Location location = locationCell.getmLocation();
         if (location == null) return;
@@ -174,15 +175,15 @@ public class LocationRepository {
         double lng = location.getLongitude();
         double slope = SlopeUtils.slope(cells, lng);
         locationCell.setmSlope(slope);
-        getmCompass().setValue(locationCell);
+        getmLocationCell().setValue(locationCell);
     }
 
     private void updateAspect(){
-        LocationCell locationCell = getmCompass().getValue();
+        LocationCell locationCell = getmLocationCell().getValue();
         Double[][] cells = locationCell.getCellArr();
         double aspect = SlopeUtils.aspect(cells);
         locationCell.setmAspect(aspect);
-        getmCompass().setValue(locationCell);
+        getmLocationCell().setValue(locationCell);
     }
 
     private void updateMountainRange(Location location) {
@@ -198,18 +199,18 @@ public class LocationRepository {
                 nearest_entity = treelineEntity;
             }
         }
-        LocationCell locationCell = getmCompass().getValue();
+        LocationCell locationCell = getmLocationCell().getValue();
         if (locationCell == null) return;
         locationCell.setmTreelineEntity(nearest_entity);
-        getmCompass().postValue(locationCell);
+        getmLocationCell().postValue(locationCell);
     }
 
     public List<TreelineEntity> getTreelineEntities() {
         return mAllTreelines;
     }
 
-    public MutableLiveData<LocationCell> getmCompass(){
-        return mCompass;
+    public MutableLiveData<LocationCell> getmLocationCell(){
+        return mLocationCell;
     }
 
 
