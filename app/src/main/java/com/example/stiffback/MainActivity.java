@@ -38,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Create the observers which updates the UI.
 
-        final Observer<CompassCell> compassObserver = new Observer<CompassCell>() {
+        final Observer<LocationCell> compassObserver = new Observer<LocationCell>() {
             @Override
-            public void onChanged(@Nullable final CompassCell compassCell) {
+            public void onChanged(@Nullable final LocationCell compassCell) {
 
                 Location location = compassCell.getmLocation();
                 if (location != null) {

@@ -37,7 +37,7 @@ public class LocationRepository {
     private AppDatabase mDb;
     private TreelineDao mTreelineDao;
     private List<TreelineEntity> mAllTreelines;
-    private MutableLiveData<CompassCell> mCompass;
+    private MutableLiveData<LocationCell> mCompass;
 
 
 
@@ -83,8 +83,8 @@ public class LocationRepository {
 
                 Log.d(TAG, String.format("New Location Lat:%f Lng:%f" , location.getLatitude(), location.getLongitude()));
                 // Start a new object from scratch
-                CompassCell compassCell = new CompassCell(location);
-                getmCompass().setValue(compassCell);
+                LocationCell locationCell = new LocationCell(location);
+                getmCompass().setValue(locationCell);
                 // retrieve new elevation values
                 updateElevation(location);
 
@@ -157,7 +157,7 @@ public class LocationRepository {
      * @param j
      */
     private void updateElevationValue(ElevationValue.PointQueryService.ElevationQuery elevationQuery, int i, int j){
-        CompassCell newCompass = getmCompass().getValue();
+        LocationCell newCompass = getmCompass().getValue();
         newCompass.updateElevationValue(elevationQuery,i,j);
         getmCompass().postValue(newCompass);
         // got new elevation values, now calculate slope
@@ -166,23 +166,23 @@ public class LocationRepository {
     }
 
     private void updateSlope(){
-        CompassCell compassCell = getmCompass().getValue();
-        Double[][] cells = compassCell.getCellArr();
-        Location location = compassCell.getmLocation();
+        LocationCell locationCell = getmCompass().getValue();
+        Double[][] cells = locationCell.getCellArr();
+        Location location = locationCell.getmLocation();
         if (location == null) return;
 
         double lng = location.getLongitude();
         double slope = SlopeUtils.slope(cells, lng);
-        compassCell.setmSlope(slope);
-        getmCompass().setValue(compassCell);
+        locationCell.setmSlope(slope);
+        getmCompass().setValue(locationCell);
     }
 
     private void updateAspect(){
-        CompassCell compassCell = getmCompass().getValue();
-        Double[][] cells = compassCell.getCellArr();
+        LocationCell locationCell = getmCompass().getValue();
+        Double[][] cells = locationCell.getCellArr();
         double aspect = SlopeUtils.aspect(cells);
-        compassCell.setmAspect(aspect);
-        getmCompass().setValue(compassCell);
+        locationCell.setmAspect(aspect);
+        getmCompass().setValue(locationCell);
     }
 
     private void updateMountainRange(Location location) {
@@ -198,17 +198,17 @@ public class LocationRepository {
                 nearest_entity = treelineEntity;
             }
         }
-        CompassCell compassCell = getmCompass().getValue();
-        if (compassCell == null) return;
-        compassCell.setmTreelineEntity(nearest_entity);
-        getmCompass().postValue(compassCell);
+        LocationCell locationCell = getmCompass().getValue();
+        if (locationCell == null) return;
+        locationCell.setmTreelineEntity(nearest_entity);
+        getmCompass().postValue(locationCell);
     }
 
     public List<TreelineEntity> getTreelineEntities() {
         return mAllTreelines;
     }
 
-    public MutableLiveData<CompassCell> getmCompass(){
+    public MutableLiveData<LocationCell> getmCompass(){
         return mCompass;
     }
 
