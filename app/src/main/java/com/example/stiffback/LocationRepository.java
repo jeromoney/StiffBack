@@ -4,8 +4,11 @@ import android.app.Application;
 import android.location.Location;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.example.stiffback.remoteDataSource.ElevationRetrofitClientInstance;
 import com.example.stiffback.remoteDataSource.ElevationService;
@@ -38,11 +41,10 @@ public class LocationRepository {
     private AppDatabase mDb;
     private TreelineDao mTreelineDao;
     private List<TreelineEntity> mAllTreelines;
-    private MutableLiveData<Location> mLocation;
-    private MutableLiveData<TreelineEntity> mNearestTreeline;
     private MutableLiveData<CompassCell> mCompass;
     private MutableLiveData<Double> mSlope;
     private MutableLiveData<Double> mAspect;
+    private MutableLiveData<Location> mLocation;
 
 
     LocationRepository(Application application) {
@@ -50,12 +52,11 @@ public class LocationRepository {
         mTreelineDao = mDb.treelineDao();
         mAllTreelines = mTreelineDao.getAll(); // TODO -- need to change to ASYNC
         initializeLocation(application);
-        mNearestTreeline = new MutableLiveData<>();
         mCompass = new MutableLiveData<>();
         mSlope = new MutableLiveData<>();
         mAspect = new MutableLiveData<>();
-    }
 
+    }
     private void initializeLocation(final Application application) {
 
 
@@ -73,12 +74,29 @@ public class LocationRepository {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
+                Location oldLocation;
+                if (getmCompass().getValue() == null) {
+                    oldLocation = null;
+                }
+                else {
+                    oldLocation = getmCompass().getValue().getmLocation();
+                }
+
                 Location location = locationResult.getLastLocation();
-                getmLocation().postValue(location);
-                // TODO - retrieve new elevation values
+
+                // If the location hasn't changed, don't query servers again.
+                if (oldLocation != null
+                        && oldLocation.getLatitude() == location.getLatitude()
+                        && oldLocation.getLongitude() == location.getLongitude()) return;
+
+                Log.d(TAG, String.format("New Location Lat:%f Lng:%f" , location.getLatitude(), location.getLongitude()));
+                // Start a new object from scratch
+                CompassCell compassCell = new CompassCell(location);
+                getmCompass().setValue(compassCell);
+                // retrieve new elevation values
                 updateElevation(location);
 
-                // TODO - Find the closest mountain range from the location
+                // Find the closest mountain range from the location
                 updateMountainRange(location);
 
             }
@@ -105,8 +123,8 @@ public class LocationRepository {
         }
 
 
-        Double lat = location.getLatitude();
-        Double lng = location.getLongitude();
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
         for (int i = -1; i<2; i++){
             for (int j = -1; j<2; j++){
                 Double newLat = lat + i * THIRD_ARC_SECOND;
@@ -147,23 +165,26 @@ public class LocationRepository {
      * @param j
      */
     private void updateElevationValue(ElevationValue.PointQueryService.ElevationQuery elevationQuery, int i, int j){
-        LiveData<CompassCell> liveData = getmCompass();
-        CompassCell newCompass = liveData.getValue();
-        if (newCompass == null) newCompass = new CompassCell();
+        CompassCell newCompass = getmCompass().getValue();
         newCompass.updateElevationValue(elevationQuery,i,j);
         getmCompass().postValue(newCompass);
         // got new elevation values, now calculate slope
-        updateSlope(newCompass.cellArr);
-        updateAspect(newCompass.cellArr);
+        updateSlope();
+        updateAspect();
     }
 
-    private void updateSlope(Double[][] cells){
-        double lng = getmLocation().getValue().getLongitude();
+    private void updateSlope(){
+        Double[][] cells = getmCompass().getValue().getCellArr();
+        Location location = getmCompass().getValue().getmLocation();
+        if (location == null) return;
+
+        double lng = getmLocation().getLongitude();
         double slope = SlopeUtils.slope(cells, lng);
         getmSlope().postValue(slope);
     }
 
-    private void updateAspect(Double[][] cells){
+    private void updateAspect(){
+        Double[][] cells = getmCompass().getValue().getCellArr();
         double aspect = SlopeUtils.aspect(cells);
         getmAspect().postValue(aspect);
     }
@@ -181,26 +202,20 @@ public class LocationRepository {
                 nearest_entity = treelineEntity;
             }
         }
-        mNearestTreeline.postValue(nearest_entity);
+        CompassCell compassCell = getmCompass().getValue();
+        if (compassCell == null) return;
+        compassCell.setmTreelineEntity(nearest_entity);
+        getmCompass().postValue(compassCell);
     }
 
-    private void setmLocation(Location location){
-        getmLocation().getValue().set(location);
-    }
 
     public List<TreelineEntity> getTreelineEntities() {
         return mAllTreelines;
     }
 
-    public MutableLiveData<Location> getmLocation(){
-        if (mLocation == null){
-            mLocation = new MutableLiveData<>();
-        }
-        return mLocation;
-    }
 
-    public MutableLiveData<TreelineEntity> getmNearestTreeline(){
-        return mNearestTreeline;
+    public Location getmLocation(){
+        return getmCompass().getValue().getmLocation();
     }
 
     public MutableLiveData<CompassCell> getmCompass(){

@@ -37,17 +37,6 @@ public class MainActivity extends AppCompatActivity {
         model = ViewModelProviders.of(this).get(LocationViewModel.class);
 
         // Create the observers which updates the UI.
-        // Treeline observer
-        final Observer<TreelineEntity> treelineObserver = new Observer<TreelineEntity>() {
-            @Override
-            public void onChanged(TreelineEntity treelineEntity) {
-                String mountainRange = treelineEntity.getMountainRange();
-                int elev = treelineEntity.getTreelineElevation();
-                binding.mountainRangeValue.setText(mountainRange);
-                binding.mountainRangeTreelineValue.setText(Integer.toString(elev));
-            }
-        };
-
 
         final Observer<CompassCell> compassObserver = new Observer<CompassCell>() {
             @Override
@@ -62,6 +51,15 @@ public class MainActivity extends AppCompatActivity {
                     binding.lngValue.setText(lngStr);
                     binding.accuracyValue.setText(accuracyStr);
                 }
+                // Update nearest treeline
+                TreelineEntity treelineEntity = compassCell.getmTreelineEntity();
+                if (treelineEntity != null){
+                    String mountainRange = treelineEntity.getMountainRange();
+                    int elev = treelineEntity.getTreelineElevation();
+                    binding.mountainRangeValue.setText(mountainRange);
+                    binding.mountainRangeTreelineValue.setText(Integer.toString(elev));
+                }
+
 
                 // Update the UI, in this case, a TextView.
                 binding.center.setText(String.format("%.0f", compassCell.cellArr[1][1]));
@@ -95,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
         };
 
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        model.getmNearestTreeline().observe(this, treelineObserver);
         model.getmCompass().observe(this,compassObserver);
         model.getmSlope().observe(this,slopeObserver);
         model.getmAspect().observe(this,aspectObserver);

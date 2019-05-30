@@ -1,7 +1,6 @@
 package com.example.stiffback;
 
 import android.app.Application;
-import android.location.Location;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -14,35 +13,16 @@ public class LocationViewModel extends AndroidViewModel {
 
     private LocationRepository mRepository;
 
-    private MutableLiveData<Location> mLocation;
     private MutableLiveData<CompassCell> mCompass;
     private MutableLiveData<Double> mSlope;
     private MutableLiveData<Double> mAspect;
-    private LiveData<TreelineEntity> mNearestTreeline;
 
     public LocationViewModel(Application application) {
         super(application);
         mRepository = new LocationRepository(application);
-        mLocation = mRepository.getmLocation();
-        mNearestTreeline = mRepository.getmNearestTreeline();
         mCompass = mRepository.getmCompass();
         mSlope = mRepository.getmSlope();
         mAspect = mRepository.getmAspect();
-    }
-
-
-    public final LiveData<TreelineEntity> getmNearestTreeline(){
-        if (mNearestTreeline == null){
-            mNearestTreeline = new MutableLiveData<>();
-        }
-        return mNearestTreeline;
-    }
-
-    public final MutableLiveData<Location> getmLocation(){
-        if (mLocation == null){
-            mLocation = new MutableLiveData<>();
-        }
-        return mLocation;
     }
 
     public final MutableLiveData<CompassCell> getmCompass(){
@@ -65,5 +45,5 @@ public class LocationViewModel extends AndroidViewModel {
         }
         return mAspect;
     }
-    
+
 }
