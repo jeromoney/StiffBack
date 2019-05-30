@@ -161,6 +161,7 @@ public class LocationRepository {
                         List<ElevationEntity> elevationEntities = mTreelineDao.elevationMatch(newLat,newLng);
                         if (elevationEntities.size() == 0){
                             // didn't find a match so go ahead with lookup
+                            Log.i(TAG, "Not in DB, checking with USGS");
                             Map<String, String> options = new HashMap<>();
                             options.put("x",newLng.toString());
                             options.put("y",newLat.toString());
@@ -181,6 +182,15 @@ public class LocationRepository {
                                     // responses
                                     double elevation = elevationQuery.mElevation;
                                     updateElevationValue(elevation, finalI, finalJ);
+
+                                    // so we found a new value, let's cache it
+                                    final ElevationEntity elevationEntity = new ElevationEntity(newLat, newLng, elevation);
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mTreelineDao.insertElevation(elevationEntity);
+                                        }
+                                    }).start();
                                 }
                                 @Override
                                 public void onFailure(Call<ElevationValue> call, Throwable t) {
@@ -189,6 +199,7 @@ public class LocationRepository {
                             });
                         }
                         else if (elevationEntities.size() == 1){
+                            Log.i(TAG, "Found a match, don't need to ping server");
                             // found a single match so just return value
                             double elevation = elevationEntities.get(0).getElevation();
                             updateElevationValue(elevation, finalI, finalJ);
@@ -242,7 +253,7 @@ public class LocationRepository {
         double aspect = SlopeUtils.aspect(cells);
         locationCell.setmSlope(slope);
         locationCell.setmAspect(aspect);
-        getmLocationCell().setValue(locationCell);
+        getmLocationCell().postValue(locationCell);
     }
 
     /**
