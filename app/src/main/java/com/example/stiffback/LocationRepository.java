@@ -161,12 +161,15 @@ public class LocationRepository {
         LocationCell locationCell = getmLocationCell().getValue();
         locationCell.updateElevationValue(elevationQuery,i,j);
         getmLocationCell().postValue(locationCell);
-        // got new elevation values, now calculate slope
-        updateSlope();
-        updateAspect();
+        // got new elevation values, now calculate slope and aspect
+        updateSlopeAspect();
     }
 
-    private void updateSlope(){
+    /**
+     * This method does not do the calculation of the slope and aspect but instead controls the order of
+     * calculation to prevent race conditions.
+     */
+    private void updateSlopeAspect(){
         LocationCell locationCell = getmLocationCell().getValue();
         Double[][] cells = locationCell.getCellArr();
         Location location = locationCell.getmLocation();
@@ -174,14 +177,8 @@ public class LocationRepository {
 
         double lng = location.getLongitude();
         double slope = SlopeUtils.slope(cells, lng);
-        locationCell.setmSlope(slope);
-        getmLocationCell().setValue(locationCell);
-    }
-
-    private void updateAspect(){
-        LocationCell locationCell = getmLocationCell().getValue();
-        Double[][] cells = locationCell.getCellArr();
         double aspect = SlopeUtils.aspect(cells);
+        locationCell.setmSlope(slope);
         locationCell.setmAspect(aspect);
         getmLocationCell().setValue(locationCell);
     }
