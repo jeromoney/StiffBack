@@ -14,15 +14,11 @@ public class LocationViewModel extends AndroidViewModel {
     private LocationRepository mRepository;
 
     private MutableLiveData<CompassCell> mCompass;
-    private MutableLiveData<Double> mSlope;
-    private MutableLiveData<Double> mAspect;
 
     public LocationViewModel(Application application) {
         super(application);
         mRepository = new LocationRepository(application);
         mCompass = mRepository.getmCompass();
-        mSlope = mRepository.getmSlope();
-        mAspect = mRepository.getmAspect();
     }
 
     public final MutableLiveData<CompassCell> getmCompass(){
@@ -31,19 +27,4 @@ public class LocationViewModel extends AndroidViewModel {
         }
         return mCompass;
     }
-
-    public final MutableLiveData<Double> getmSlope(){
-        if (mSlope == null){
-            mSlope = new MutableLiveData<>();
-        }
-        return mSlope;
-    }
-
-    public final MutableLiveData<Double> getmAspect(){
-        if (mAspect == null){
-            mAspect = new MutableLiveData<>();
-        }
-        return mAspect;
-    }
-
 }

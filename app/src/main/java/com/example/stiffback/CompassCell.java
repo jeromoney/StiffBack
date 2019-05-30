@@ -14,6 +14,8 @@ public class CompassCell {
     private String TAG = CompassCell.class.getSimpleName();
     private Location mLocation;
     private TreelineEntity mTreelineEntity;
+    private double mSlope;
+    private double mAspect;
 
     protected Double[][] cellArr = new Double[3][3];
 
@@ -36,6 +38,23 @@ public class CompassCell {
     public void setmTreelineEntity(TreelineEntity treelineEntity){
         this.mTreelineEntity = treelineEntity;
     }
+
+    public void setmSlope(double slope){
+        this.mSlope = slope;
+    }
+
+    public double getmSlope(){
+        return this.mSlope;
+    }
+
+    public void setmAspect(double aspect){
+        this.mAspect = aspect;
+    }
+
+    public double getmAspect(){
+        return this.mAspect;
+    }
+
 
     public TreelineEntity getmTreelineEntity(){
         return this.mTreelineEntity;

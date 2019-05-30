@@ -71,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
                 binding.southEast.setText(String.format("%.0f", compassCell.cellArr[0][2]));
                 binding.south.setText(String.format("%.0f", compassCell.cellArr[0][1]));
                 binding.southWest.setText(String.format("%.0f", compassCell.cellArr[0][0]));
+
+                // update slope and aspect
+                double slope = compassCell.getmSlope();
+                binding.slopeValue.setText(Double.toString(slope));
+                double aspect = compassCell.getmAspect();
+                binding.aspectValue.setText(Double.toString(aspect));
             }
         };
 
@@ -83,19 +89,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        // Create the observer which updates the UI.
-        final Observer<Double> slopeObserver = new Observer<Double>() {
-            @Override
-            public void onChanged(@Nullable final Double slope) {
-                // Update the UI, in this case, a TextView.
-                binding.slopeValue.setText(slope.toString());
-            }
-        };
-
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
         model.getmCompass().observe(this,compassObserver);
-        model.getmSlope().observe(this,slopeObserver);
-        model.getmAspect().observe(this,aspectObserver);
 
     }
 

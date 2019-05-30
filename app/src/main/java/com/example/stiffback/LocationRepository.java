@@ -4,11 +4,7 @@ import android.app.Application;
 import android.location.Location;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.example.stiffback.remoteDataSource.ElevationRetrofitClientInstance;
 import com.example.stiffback.remoteDataSource.ElevationService;
@@ -42,9 +38,7 @@ public class LocationRepository {
     private TreelineDao mTreelineDao;
     private List<TreelineEntity> mAllTreelines;
     private MutableLiveData<CompassCell> mCompass;
-    private MutableLiveData<Double> mSlope;
-    private MutableLiveData<Double> mAspect;
-    private MutableLiveData<Location> mLocation;
+
 
 
     LocationRepository(Application application) {
@@ -53,8 +47,6 @@ public class LocationRepository {
         mAllTreelines = mTreelineDao.getAll(); // TODO -- need to change to ASYNC
         initializeLocation(application);
         mCompass = new MutableLiveData<>();
-        mSlope = new MutableLiveData<>();
-        mAspect = new MutableLiveData<>();
 
     }
     private void initializeLocation(final Application application) {
@@ -174,19 +166,23 @@ public class LocationRepository {
     }
 
     private void updateSlope(){
-        Double[][] cells = getmCompass().getValue().getCellArr();
-        Location location = getmCompass().getValue().getmLocation();
+        CompassCell compassCell = getmCompass().getValue();
+        Double[][] cells = compassCell.getCellArr();
+        Location location = compassCell.getmLocation();
         if (location == null) return;
 
-        double lng = getmLocation().getLongitude();
+        double lng = location.getLongitude();
         double slope = SlopeUtils.slope(cells, lng);
-        getmSlope().postValue(slope);
+        compassCell.setmSlope(slope);
+        getmCompass().setValue(compassCell);
     }
 
     private void updateAspect(){
-        Double[][] cells = getmCompass().getValue().getCellArr();
+        CompassCell compassCell = getmCompass().getValue();
+        Double[][] cells = compassCell.getCellArr();
         double aspect = SlopeUtils.aspect(cells);
-        getmAspect().postValue(aspect);
+        compassCell.setmAspect(aspect);
+        getmCompass().setValue(compassCell);
     }
 
     private void updateMountainRange(Location location) {
@@ -208,27 +204,14 @@ public class LocationRepository {
         getmCompass().postValue(compassCell);
     }
 
-
     public List<TreelineEntity> getTreelineEntities() {
         return mAllTreelines;
-    }
-
-
-    public Location getmLocation(){
-        return getmCompass().getValue().getmLocation();
     }
 
     public MutableLiveData<CompassCell> getmCompass(){
         return mCompass;
     }
 
-    public MutableLiveData<Double> getmSlope(){
-        return mSlope;
-    }
-
-    public MutableLiveData<Double> getmAspect(){
-        return mAspect;
-    }
 
 
 
