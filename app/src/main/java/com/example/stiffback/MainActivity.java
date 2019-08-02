@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(@Nullable final LocationCell compassCell) {
 
                 // Update nearest treeline
-                TreelineEntity treelineEntity = compassCell.getmTreelineEntity();
+                TreelineEntity treelineEntity = compassCell.getMTreelineEntity();
                 if (treelineEntity != null){
                     String mountainRange = treelineEntity.getMountainRange();
                     int elev = treelineEntity.getTreelineElevation();
@@ -65,20 +66,20 @@ public class MainActivity extends AppCompatActivity {
 
 
                 // Update the UI, in this case, a TextView.
-                binding.center.setText(String.format("%.0f", compassCell.cellArr[1][1]));
-                binding.north.setText(String.format("%.0f", compassCell.cellArr[2][0]));
-                binding.northEast.setText(String.format("%.0f", compassCell.cellArr[2][2]));
-                binding.northWest.setText(String.format("%.0f", compassCell.cellArr[2][0]));
-                binding.east.setText(String.format("%.0f", compassCell.cellArr[1][2]));
-                binding.west.setText(String.format("%.0f", compassCell.cellArr[1][0]));
-                binding.southEast.setText(String.format("%.0f", compassCell.cellArr[0][2]));
-                binding.south.setText(String.format("%.0f", compassCell.cellArr[0][1]));
-                binding.southWest.setText(String.format("%.0f", compassCell.cellArr[0][0]));
+                binding.center.setText(String.format("%.0f", compassCell.getCellArr()[1][1]));
+                binding.north.setText(String.format("%.0f", compassCell.getCellArr()[2][0]));
+                binding.northEast.setText(String.format("%.0f", compassCell.getCellArr()[2][2]));
+                binding.northWest.setText(String.format("%.0f", compassCell.getCellArr()[2][0]));
+                binding.east.setText(String.format("%.0f", compassCell.getCellArr()[1][2]));
+                binding.west.setText(String.format("%.0f", compassCell.getCellArr()[1][0]));
+                binding.southEast.setText(String.format("%.0f", compassCell.getCellArr()[0][2]));
+                binding.south.setText(String.format("%.0f", compassCell.getCellArr()[0][1]));
+                binding.southWest.setText(String.format("%.0f", compassCell.getCellArr()[0][0]));
 
                 // update slope and aspect
-                double slope = compassCell.getmSlope();
+                double slope = compassCell.getMSlope();
                 binding.slopeValue.setText(Double.toString(slope));
-                double aspect = compassCell.getmAspect();
+                double aspect = compassCell.getMAspect();
                 binding.aspectValue.setText(Double.toString(aspect));
             }
         };

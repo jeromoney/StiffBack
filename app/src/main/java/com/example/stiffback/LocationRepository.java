@@ -244,14 +244,14 @@ public class LocationRepository {
         Location location = getmLocation().getValue();
         if (location == null) return;
         LocationCell locationCell = getmLocationCell().getValue();
-        Double[][] cells = locationCell.getCellArr();
+        double[][] cells = locationCell.getCellArr();
         if (location == null) return;
         // if any of the elevations are 0, that means we are missing a value so don't calculation.
         for (int i=0; i<3; i++) for (int j=0; j<3; j++){
             if (cells[i][j] < 1.){
                 // found a null cell so set slope and aspect to -1
-                locationCell.setmSlope(-1);
-                locationCell.setmAspect(-1);
+                locationCell.setMSlope(-1);
+                locationCell.setMAspect(-1);
                 getmLocationCell().postValue(locationCell);
                 return;
             };
@@ -260,8 +260,8 @@ public class LocationRepository {
         double lng = location.getLongitude();
         double slope = SlopeUtils.slope(cells, lng);
         double aspect = SlopeUtils.aspect(cells);
-        locationCell.setmSlope(slope);
-        locationCell.setmAspect(aspect);
+        locationCell.setMSlope(slope);
+        locationCell.setMAspect(aspect);
         getmLocationCell().postValue(locationCell);
     }
 
@@ -286,7 +286,7 @@ public class LocationRepository {
         }
         LocationCell locationCell = getmLocationCell().getValue();
         if (locationCell == null) return;
-        locationCell.setmTreelineEntity(nearest_entity);
+        locationCell.setMTreelineEntity(nearest_entity);
         getmLocationCell().postValue(locationCell);
     }
 

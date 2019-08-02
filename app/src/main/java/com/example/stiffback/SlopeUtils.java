@@ -32,7 +32,7 @@ public final class SlopeUtils {
      * @param lng
      * @return
      */
-    public static double slope(Double[][] cell, Double lng){
+    public static double slope(double[][] cell, double lng){
         // Convert 1/3 arc-seconds to feet https://www.esri.com/news/arcuser/0400/wdside.html
         double Y_CELLSIZE = 101.27 / 3.; // ft
         double x_cellsize = Y_CELLSIZE * Math.cos(lng);
@@ -54,7 +54,7 @@ public final class SlopeUtils {
         return Math.atan(rise_run) * (180. / Math.PI);
     }
 
-    public static Double aspect(Double[][] cell){
+    public static Double aspect(double[][] cell){
         //http://desktop.arcgis.com/en/arcmap/10.3/tools/spatial-analyst-toolbox/how-aspect-works.htm
         double a = cell[0][0];
         double b = cell[0][1];
