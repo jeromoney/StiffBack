@@ -48,7 +48,7 @@ public class LocationRepository {
     private MutableLiveData<Location> mLocation;
 
     LocationRepository(Application application) {
-        mDb = AppDatabase.getInstance(application);
+        mDb = AppDatabase.Companion.getInstance(application);
         mTreelineDao = mDb.treelineDao();
 
         // Set up my observer for treelines. This value shouldn't change but needs to be called
@@ -168,18 +168,18 @@ public class LocationRepository {
                             options.put("output","json");
                             options.put("units","Feet");
 
-                            ElevationService service = ElevationRetrofitClientInstance.getRetrofitInstance().create(ElevationService.class);
+                            ElevationService service = ElevationRetrofitClientInstance.INSTANCE.getRetrofitInstance().create(ElevationService.class);
                             Call<ElevationValue> call = service.getMyLocation(options);
 
                             call.enqueue(new Callback<ElevationValue>() {
                                 @Override
                                 public void onResponse(Call<ElevationValue> call, Response<ElevationValue> response) {
                                     // Get the response object of our query
-                                    ElevationValue.PointQueryService.ElevationQuery elevationQuery = response.body().mPointQueryService.mElevationQuery;
+                                    ElevationValue.PointQueryService.ElevationQuery elevationQuery = response.body().getMPointQueryService().getMElevationQuery();
                                     // Pass it to LocationCell object who decides where to place it
                                     // TODO- Make sure that old requests are canceled and don't replace newer
                                     // responses
-                                    double elevation = elevationQuery.mElevation;
+                                    double elevation = elevationQuery.getMElevation();
                                     updateElevationValue(elevation, finalI, finalJ);
 
                                     // so we found a new value, let's cache it
