@@ -70,7 +70,7 @@ public final class SlopeUtils {
 
         double aspect = (180. / Math.PI) * Math.atan2(dy, -dx);
         // Convert to compass direction values
-        return (90 - aspect)%360;
+        return (90 - aspect+ 360)%360;
 }
 
 }

@@ -168,7 +168,6 @@ public class LocationRepository {
                             options.put("output","json");
                             options.put("units","Feet");
 
-
                             ElevationService service = ElevationRetrofitClientInstance.getRetrofitInstance().create(ElevationService.class);
                             Call<ElevationValue> call = service.getMyLocation(options);
 
@@ -247,6 +246,16 @@ public class LocationRepository {
         LocationCell locationCell = getmLocationCell().getValue();
         Double[][] cells = locationCell.getCellArr();
         if (location == null) return;
+        // if any of the elevations are 0, that means we are missing a value so don't calculation.
+        for (int i=0; i<3; i++) for (int j=0; j<3; j++){
+            if (cells[i][j] < 1.){
+                // found a null cell so set slope and aspect to -1
+                locationCell.setmSlope(-1);
+                locationCell.setmAspect(-1);
+                getmLocationCell().postValue(locationCell);
+                return;
+            };
+        }
 
         double lng = location.getLongitude();
         double slope = SlopeUtils.slope(cells, lng);
