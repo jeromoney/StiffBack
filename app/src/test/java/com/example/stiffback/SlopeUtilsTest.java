@@ -18,7 +18,7 @@ public class SlopeUtilsTest {
 
     @Test
     public void arcSecondAssert(){
-        Double arc_second_third = SlopeUtils.THIRD_ARC_SECOND;
+        Double arc_second_third = SlopeUtils.INSTANCE.getTHIRD_ARC_SECOND();
         Double difference = Math.abs(arc_second_third - 9.259259*Math.pow(10,-5));
         assertTrue(difference < 0.0001);
     }
@@ -34,31 +34,31 @@ public class SlopeUtilsTest {
             for (Double[] row : flatArry) {
                 Arrays.fill(row, randomElev);
             }
-            Double flat_slope = SlopeUtils.slope(flatArry, randomLat);
+            Double flat_slope = SlopeUtils.INSTANCE.slope(flatArry, randomLat);
             assertTrue(flat_slope < 0.0001);
         }
 
         // Test slope described in ArcGis documents
-        double arc_slope = SlopeUtils.slope(ARC_GIS_SLOPE, 0.);
+        double arc_slope = SlopeUtils.INSTANCE.slope(ARC_GIS_SLOPE, 0.);
         assertTrue(Math.abs(arc_slope - 29.37518223351121) < 0.0001);
     }
 
     // test for aspect
     @Test
     public void aspectTest(){
-        double aspect = SlopeUtils.aspect(ARC_GIS_ASPECT);
+        double aspect = SlopeUtils.INSTANCE.aspect(ARC_GIS_ASPECT);
         assertTrue(Math.abs(aspect - 92.64) < 0.01);
 
-        aspect = SlopeUtils.aspect(NORTH_ASPECT);
+        aspect = SlopeUtils.INSTANCE.aspect(NORTH_ASPECT);
         assertTrue(Math.abs(aspect - 0.) < 0.01);
 
-        aspect = SlopeUtils.aspect(SOUTH_ASPECT);
+        aspect = SlopeUtils.INSTANCE.aspect(SOUTH_ASPECT);
         assertTrue(Math.abs(aspect - 180.) < 0.01);
 
-        aspect = SlopeUtils.aspect(EAST_ASPECT);
+        aspect = SlopeUtils.INSTANCE.aspect(EAST_ASPECT);
         assertTrue(Math.abs(aspect -90.) < 0.01);
 
-        aspect = SlopeUtils.aspect(WEST_ASPECT);
+        aspect = SlopeUtils.INSTANCE.aspect(WEST_ASPECT);
         assertTrue(Math.abs(aspect - 270.) < 0.01);
     }
 

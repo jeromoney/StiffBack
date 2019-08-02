@@ -32,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.example.stiffback.SlopeUtils.THIRD_ARC_SECOND;
+import static com.example.stiffback.SlopeUtils.INSTANCE;
 
 public class LocationRepository {
 
@@ -142,12 +142,12 @@ public class LocationRepository {
         }
 
 
-        double lat = SlopeUtils.arc_second_snap(location.getLatitude());
-        double lng = SlopeUtils.arc_second_snap(location.getLongitude());
+        double lat = SlopeUtils.INSTANCE.arc_second_snap(location.getLatitude());
+        double lng = SlopeUtils.INSTANCE.arc_second_snap(location.getLongitude());
         for (int i = -1; i<2; i++){
             for (int j = -1; j<2; j++){
-                final Double newLat = SlopeUtils.arc_second_snap(lat + i * THIRD_ARC_SECOND);
-                final Double newLng = SlopeUtils.arc_second_snap(lng + j * THIRD_ARC_SECOND);
+                final Double newLat = SlopeUtils.INSTANCE.arc_second_snap(lat + i * INSTANCE.getTHIRD_ARC_SECOND());
+                final Double newLng = SlopeUtils.INSTANCE.arc_second_snap(lng + j * INSTANCE.getTHIRD_ARC_SECOND());
                 // Used to pass integers to the onReponse. Is there a better way?
                 final int finalI = i;
                 final int finalJ = j;
@@ -258,8 +258,8 @@ public class LocationRepository {
         }
 
         double lng = location.getLongitude();
-        double slope = SlopeUtils.slope(cells, lng);
-        double aspect = SlopeUtils.aspect(cells);
+        double slope = SlopeUtils.INSTANCE.slope(cells, lng);
+        double aspect = SlopeUtils.INSTANCE.aspect(cells);
         locationCell.setMSlope(slope);
         locationCell.setMAspect(aspect);
         getmLocationCell().postValue(locationCell);
